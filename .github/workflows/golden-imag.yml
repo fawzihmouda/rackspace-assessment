@@ -1,6 +1,9 @@
 name: Workflow to deploy webserver image on AWS
 
 on:
+    workflow_dispatch:
+    tags:
+      description: 'For Test Only'
   schedule:
     - cron: '0 5 * * *'
   push:
