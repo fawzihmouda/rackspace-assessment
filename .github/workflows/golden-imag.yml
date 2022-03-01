@@ -5,11 +5,11 @@ on:
 
 
 jobs:
-  creatte-golden-image:
+  create-golden_image:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: "./golden-image/"
+        working-directory: "./golden_image/"
     env:
       AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -53,10 +53,10 @@ jobs:
           sudo apt-get update && sudo apt-get install packer
         
       - name: Packer init
-        run: packer init golden-image.pkr.hcl
+        run: packer init golden_image.pkr.hcl
 
       - name: Packer Build
-        run: packer build golden-image.pkr.hcl 
+        run: packer build golden_image.pkr.hcl 
         continue-on-error: true
         
       - name: Print New AMI ID
