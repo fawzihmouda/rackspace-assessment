@@ -25,16 +25,16 @@ jobs:
         run: zip asg_instance_refresh.zip asg_instance_refresh.py
 
       - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1.2.1
+        uses: hashicorp/setup-terraform@v1.2.1
 
       - name: Terraform init
-      run: terraform init
+        run: terraform init
 
       - name: Terraform file validation
-      run: terraform validate
+        run: terraform validate
 
       - name: Display the plan
-      run: terraform plan
+        run: terraform plan
 
       - name: Apply terraform
-      run: terraform apply -auto-approve
+        run: terraform apply -auto-approve
