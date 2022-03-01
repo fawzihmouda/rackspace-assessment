@@ -1,9 +1,7 @@
 name: Workflow to deploy Terraform
 
 on:
-  push: 
-      paths:
-        - ./infrastructure
+  [push]
 
 
 jobs:
