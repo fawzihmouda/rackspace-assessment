@@ -2,7 +2,7 @@
 # Global Tags
 #######################################
 environment = "Dev"
-client_name = "ClientName"
+client_name = "assessment"
 creator     = "Fawzi H"
 departement = "X"
 compliance  = "HIPAA"
