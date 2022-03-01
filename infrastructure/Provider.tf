@@ -4,7 +4,7 @@ terraform {
 
     bucket = "fawzihmouda-terraform-statefile"
     key    = "tfstate"
-    region = "ap-southeast-1"
+    region = "ap-southeast-2"
   }
   required_providers {
     aws = {
