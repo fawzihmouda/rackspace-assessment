@@ -3,7 +3,9 @@ name: Workflow to deploy webserver image on AWS
 on:
   schedule:
     - cron: '0 5 * * *'
-
+  push:
+    paths:
+      - golden_image/*
 
 jobs:
   create-golden_image:
