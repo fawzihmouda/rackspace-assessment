@@ -1,8 +1,9 @@
 name: Workflow to deploy Terraform
 
 on:
-  paths:
-      - ./infrastructure
+  push: 
+      paths:
+        - ./infrastructure
 
 jobs:
   create-golden_image:
