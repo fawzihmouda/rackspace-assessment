@@ -1,7 +1,8 @@
 name: Workflow to deploy webserver image on AWS
 
 on:
-  [push]
+  paths:
+      - ./golden_image
 
 
 jobs:
