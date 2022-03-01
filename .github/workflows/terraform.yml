@@ -5,6 +5,7 @@ on:
       paths:
         - ./infrastructure
 
+
 jobs:
   deploy-infrastructure:
     runs-on: ubuntu-latest
@@ -23,17 +24,17 @@ jobs:
       - name: Compress Lambda code to be used in Terraform
         run: zip asg_instance_refresh.zip asg_instance_refresh.py
 
-      name: Setup Terraform
+      - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1.2.1
 
-      name: Terraform init
+      - name: Terraform init
       run: terraform init
 
-      name: Terraform file validation
+      - name: Terraform file validation
       run: terraform validate
 
-      name: Display the plan
+      - name: Display the plan
       run: terraform plan
 
-      name: Apply terraform
+      - name: Apply terraform
       run: terraform apply -auto-approve
