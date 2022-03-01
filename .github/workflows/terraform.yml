@@ -6,7 +6,7 @@ on:
         - ./infrastructure
 
 jobs:
-  create-golden_image:
+  deploy-infrastructure:
     runs-on: ubuntu-latest
     defaults:
       run:
