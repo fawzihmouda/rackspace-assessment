@@ -1,0 +1,74 @@
+name: Workflow to deploy webserver image on AWS
+
+on:
+  [push]
+
+
+jobs:
+  creatte-golden-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./golden-image/"
+    env:
+      AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.0
+      
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: List the Public IP if Github Runners to whitelist it in the security group for packer build SSH Connection
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Save Github Runner Public IP to packer-vpc.tf
+        run: |
+          echo ${{ steps.ip.outputs.ipv4 }}
+          echo 'github_runner_ip = "${{ steps.ip.outputs.ipv4 }}/32" ' >> terraform.tfvars
+ 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+        
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform apply to deploy a temporary VPC for Packer image creation
+        run: terraform apply -auto-approve 
+        
+
+      - name: Install Packer
+        run: |
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install packer
+        
+      - name: Packer init
+        run: packer init golden-image.pkr.hcl
+
+      - name: Packer Build
+        run: packer build golden-image.pkr.hcl 
+        continue-on-error: true
+        
+      - name: Print New AMI ID
+        run: |
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+          echo $AMI_ID > AMI.txt
+          cat AMI.txt
+        continue-on-error: true
+
+      - name: Update Systems Manager Parameter Store with the latest AMI ID
+        run: aws ssm put-parameter --name "/amis/linux/golden-ami" --type "String" --data-type "aws:ec2:image" --value $(cat AMI.txt) --overwrite
+        continue-on-error: true
+
+      - name: Destroy Packer temporary VPC 
+        run: terraform destroy -auto-approve
