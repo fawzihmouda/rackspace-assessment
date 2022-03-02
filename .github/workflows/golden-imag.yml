@@ -27,11 +27,11 @@ jobs:
         with:
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: List the Public IP if Github Runners to whitelist it in the security group for packer build SSH Connection
+      - name: List the Public IP of Github Runners to whitelist it in the security group for packer build SSH Connection
         id: ip
         uses: haythem/public-ip@v1.2
 
-      - name: Save Github Runner Public IP to packer-vpc.tf
+      - name: Create a terraform.tfvars and save the runner's Public IP as variable
         run: |
           echo ${{ steps.ip.outputs.ipv4 }}
           echo 'github_runner_ip = "${{ steps.ip.outputs.ipv4 }}/32" ' >> terraform.tfvars
